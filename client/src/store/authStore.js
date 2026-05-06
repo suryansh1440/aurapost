@@ -10,9 +10,13 @@ export const useAuthStore = create((set, get) => ({
     isGoogleLoggingIn: false,
     isFacebookLoggingIn: false,
     isLoggingOut: false,
-    isFetchingMe: false,
+    isFetchingMe: true,
     isUpdatingProfile: false,
     isChangingPassword: false,
+    isUpdatingNotifications: false,
+    isDeactivatingAccount: false,
+    isDeletingAccount: false,
+    isExportingData: false,
 
     signupByEmail: async (data) => {
         set({ isSigningUp: true });
@@ -128,7 +132,6 @@ export const useAuthStore = create((set, get) => ({
             return res.data;
         } catch (error) {
             console.log("error in getMe", error.response?.data?.message || error.message)
-            throw error.response?.data?.message || error.message;
         } finally {
             set({ isFetchingMe: false });
         }
@@ -219,6 +222,79 @@ export const useAuthStore = create((set, get) => ({
             throw error;
         } finally {
             set({ isChangingPassword: false });
+        }
+    },
+
+    updateNotificationPreferences: async (preferences) => {
+        set({ isUpdatingNotifications: true });
+        try {
+            const res = await apiClient.put("/auth/notification-preferences", { preferences });
+            if (res.data.success) {
+                set({ user: { ...get().user, notificationPreferences: res.data.preferences } });
+                toast.success(res.data.message);
+                return res.data;
+            }
+            toast.error(res.data.message);
+            return res.data;
+        } catch (error) {
+            console.log("error in updateNotificationPreferences", error.response?.data?.message || error.message);
+            toast.error(error.response?.data?.message || "Failed to update preferences");
+            throw error;
+        } finally {
+            set({ isUpdatingNotifications: false });
+        }
+    },
+
+    deactivateAccount: async () => {
+        set({ isDeactivatingAccount: true });
+        try {
+            const res = await apiClient.put("/auth/account/deactivate");
+            if (res.data.success) {
+                set({ user: { ...get().user, isActive: res.data.isActive } });
+                toast.success(res.data.message);
+                return res.data;
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to toggle account status");
+        } finally {
+            set({ isDeactivatingAccount: false });
+        }
+    },
+
+    deleteAccount: async (password) => {
+        set({ isDeletingAccount: true });
+        try {
+            const res = await apiClient.delete("/auth/account", { data: { password } });
+            if (res.data.success) {
+                set({ user: null, isAuthenticated: false });
+                toast.success(res.data.message);
+                return res.data;
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || "Failed to delete account");
+        } finally {
+            set({ isDeletingAccount: false });
+        }
+    },
+
+    exportUserData: async () => {
+        set({ isExportingData: true });
+        try {
+            const res = await apiClient.get("/auth/account/export");
+            if (res.data.success) {
+                const blob = new Blob([JSON.stringify(res.data.data, null, 2)], { type: "application/json" });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `aurapost-data-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                toast.success("Data exported successfully");
+                return res.data;
+            }
+        } catch (error) {
+            toast.error("Failed to export data");
+        } finally {
+            set({ isExportingData: false });
         }
     }
 }))

@@ -71,7 +71,7 @@ const ProfileSetting = () => {
           <div className="flex gap-3">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="px-5 py-2.5 bg-[#39FF14] text-black text-[13px] font-bold rounded-xl hover:bg-[#32e012] transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="px-5 py-2 bg-[#39FF14] text-white text-[13px] font-bold rounded-xl hover:bg-[#32e012] transition-all !border-2 !border-solid !border-[#39FF14]/50 hover:!border-[#39FF14]"
             >
               Upload New
             </button>

@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router'
+import AppWrapper       from '../AppWrapper'
 import RootLayout       from '../layouts/RootLayout'
 import AuthLayout       from '../layouts/AuthLayout'
 import DashboardLayout  from '../layouts/DashboardLayout'
@@ -19,6 +20,8 @@ import SchedulerScreen  from '../pages/dashboard/SchedulerScreen'
 import SettingsScreen   from '../pages/dashboard/SettingsScreen'
 import ProfileSetting    from '../pages/dashboard/settings/ProfileSetting'
 import SecuritySetting   from '../pages/dashboard/settings/SecuritySetting'
+import NotificationSetting from '../pages/dashboard/settings/NotificationSetting'
+import AccountSetting from '../pages/dashboard/settings/AccountSetting'
 
 // Workspace Specific Screens
 import WsDashboard      from '../pages/dashboard/workspace/WsDashboard'
@@ -29,56 +32,61 @@ import WsPosts          from '../pages/dashboard/workspace/WsPosts'
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      { index: true,     element: <LandingPage /> },
-      { path: 'pricing', element: <PricingPage /> },
-      { path: 'about',   element: <AboutPage /> },
-      { path: 'blog',    element: <BlogPage /> },
-    ],
-  },
-  {
-    element: <AuthLayout />,
-    children: [
-      { path: 'login',  element: <LoginPage /> },
-      { path: 'signup', element: <SignupPage /> },
-      { path: 'forgot-password', element: <ForgotPasswordPage /> },
-    ],
-  },
-  {
-    element: <ProtectedRoute />,
+    element: <AppWrapper />,
     children: [
       {
-        path: 'dashboard',
-        element: <DashboardLayout />,
+        path: '/',
+        element: <RootLayout />,
         children: [
-          { index: true, element: <DashboardScreen /> },
-          { path: 'workspaces', element: <WorkspacesScreen /> },
-          { path: 'analytics', element: <AnalyticsScreen /> },
-          { path: 'scheduler', element: <SchedulerScreen /> },
-          { 
-            path: 'settings', 
-            element: <SettingsScreen />,
-            children: [
-              { index: true, element: <ProfileSetting /> },
-              { path: 'profile', element: <ProfileSetting /> },
-              { path: 'security', element: <SecuritySetting /> },
-              { path: 'notifications', element: <div className="text-dim p-8">Notifications Settings Coming Soon</div> },
-              { path: 'billing', element: <div className="text-dim p-8">Billing Settings Coming Soon</div> },
-              { path: 'integrations', element: <div className="text-dim p-8">Integrations Settings Coming Soon</div> },
-              { path: 'account', element: <div className="text-dim p-8">Account Ownership Settings Coming Soon</div> },
-            ]
-          },
-          { path: 'workspaces/:wsId', element: <WsDashboard /> },
-          { path: 'workspaces/:wsId/create', element: <WsCreate /> },
-          { path: 'workspaces/:wsId/characters', element: <WsCharacters /> },
-          { path: 'workspaces/:wsId/trends', element: <WsTrends /> },
-          { path: 'workspaces/:wsId/posts', element: <WsPosts /> },
+          { index: true,     element: <LandingPage /> },
+          { path: 'pricing', element: <PricingPage /> },
+          { path: 'about',   element: <AboutPage /> },
+          { path: 'blog',    element: <BlogPage /> },
         ],
       },
-    ],
-  },
+      {
+        element: <AuthLayout />,
+        children: [
+          { path: 'login',  element: <LoginPage /> },
+          { path: 'signup', element: <SignupPage /> },
+          { path: 'forgot-password', element: <ForgotPasswordPage /> },
+        ],
+      },
+      {
+        element: <ProtectedRoute />,
+        children: [
+          {
+            path: 'dashboard',
+            element: <DashboardLayout />,
+            children: [
+              { index: true, element: <DashboardScreen /> },
+              { path: 'workspaces', element: <WorkspacesScreen /> },
+              { path: 'analytics', element: <AnalyticsScreen /> },
+              { path: 'scheduler', element: <SchedulerScreen /> },
+              { 
+                path: 'settings', 
+                element: <SettingsScreen />,
+                children: [
+                  { index: true, element: <ProfileSetting /> },
+                  { path: 'profile', element: <ProfileSetting /> },
+                  { path: 'security', element: <SecuritySetting /> },
+                  { path: 'notifications', element: <NotificationSetting /> },
+                  { path: 'billing', element: <div className="text-dim p-8">Billing Settings Coming Soon</div> },
+                  { path: 'integrations', element: <div className="text-dim p-8">Integrations Settings Coming Soon</div> },
+                  { path: 'account', element: <AccountSetting /> },
+                ]
+              },
+              { path: 'workspaces/:wsId', element: <WsDashboard /> },
+              { path: 'workspaces/:wsId/create', element: <WsCreate /> },
+              { path: 'workspaces/:wsId/characters', element: <WsCharacters /> },
+              { path: 'workspaces/:wsId/trends', element: <WsTrends /> },
+              { path: 'workspaces/:wsId/posts', element: <WsPosts /> },
+            ],
+          },
+        ],
+      },
+    ]
+  }
 ])
 
 export default router

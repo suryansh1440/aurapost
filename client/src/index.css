@@ -59,7 +59,7 @@ body {
 
 a { text-decoration: none; color: inherit; }
 img, svg { display: block; max-width: 100%; }
-button { cursor: pointer; border: none; background: none; font-family: inherit; }
+button { cursor: pointer; border: 1px solid transparent; background: none; font-family: inherit; }
 ul, ol { list-style: none; padding: 0; margin: 0; }
 
 /* ── Scrollbar ───────────────────────────────────────────────────── */

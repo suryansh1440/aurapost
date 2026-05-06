@@ -15,7 +15,12 @@ export const useWorkspaceStore = create((set, get) => ({
     isDeleting: false,
     isUpdating: false,
 
-    fetchWorkspaces: async (page = 1, limit = 10) => {
+    fetchWorkspaces: async (page = 1, limit = 10, force = false) => {
+        // If we already have workspaces and not forcing a refresh, return early
+        if (!force && get().workspaces.length > 0 && get().pagination.currentPage === page) {
+            return;
+        }
+
         set({ isLoading: true });
         try {
             const res = await apiClient.get(`/workspaces?page=${page}&limit=${limit}`);
@@ -93,6 +98,29 @@ export const useWorkspaceStore = create((set, get) => ({
             throw error;
         } finally {
             set({ isDeleting: false });
+        }
+    },
+
+    fetchWorkspaceById: async (id) => {
+        // First check if we have it in our store
+        const existing = get().workspaces.find(ws => ws._id === id);
+        if (existing) return existing;
+
+        set({ isLoading: true });
+        try {
+            const res = await apiClient.get(`/workspaces/${id}`);
+            if (res.data.success) {
+                set(state => ({
+                    workspaces: state.workspaces.some(w => w._id === id) 
+                        ? state.workspaces.map(w => w._id === id ? res.data.workspace : w)
+                        : [...state.workspaces, res.data.workspace]
+                }));
+                return res.data.workspace;
+            }
+        } catch (error) {
+            console.error("Error fetching workspace by id", error);
+        } finally {
+            set({ isLoading: false });
         }
     },
 }));

@@ -12,7 +12,8 @@ const Sidebar = () => {
   const isWorkspaceContext = location.pathname.includes("/workspaces/") && wsId;
   const currentWs = isWorkspaceContext ? workspaces.find(w => w._id === wsId) : null;
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path, exact = true) => 
+    exact ? location.pathname === path : location.pathname.startsWith(path);
   
   const { logout } = useAuthStore();
   const navigate = useNavigate();
@@ -114,7 +115,7 @@ const Sidebar = () => {
             </Link>
 
             <div className="sidebar-section-label" style={{ marginTop: "2rem" }}>Configuration</div>
-            <Link to="/dashboard/settings" className={`nav-item ${isActive('/dashboard/settings') ? 'active' : ''}`}>
+            <Link to="/dashboard/settings" className={`nav-item ${isActive('/dashboard/settings', false) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.settings} />
               </svg>

@@ -367,3 +367,77 @@ export const changePassword = async (req, res) => {
         return res.status(500).json({ message: error.message, success: false });
     }
 };
+
+export const updateNotificationPreferences = async (req, res) => {
+    try {
+        const { preferences } = req.body;
+        const user = await User.findById(req.user._id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found", success: false });
+        }
+
+        user.notificationPreferences = preferences;
+        await user.save();
+
+        return res.status(200).json({ 
+            message: "Notification preferences updated successfully", 
+            success: true,
+            preferences: user.notificationPreferences
+        });
+    } catch (error) {
+        console.log("error in updateNotificationPreferences controller", error.message);
+        return res.status(500).json({ message: error.message, success: false });
+    }
+};
+
+export const deactivateAccount = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.isActive = !user.isActive;
+        await user.save();
+        return res.status(200).json({ 
+            message: `Account ${user.isActive ? 'activated' : 'deactivated'} successfully`, 
+            success: true, 
+            isActive: user.isActive 
+        });
+    } catch (error) {
+        return res.status(500).json({ message: error.message, success: false });
+    }
+};
+
+export const deleteAccount = async (req, res) => {
+    try {
+        const { password } = req.body;
+        const user = await User.findById(req.user._id).select("+password");
+        
+        if (user.authProvider === 'EMAIL') {
+            const isMatch = await user.comparePassword(password);
+            if (!isMatch) return res.status(400).json({ message: "Incorrect password", success: false });
+        }
+
+        await User.findByIdAndDelete(req.user._id);
+        return res.status(200).json({ message: "Account deleted permanently", success: true });
+    } catch (error) {
+        return res.status(500).json({ message: error.message, success: false });
+    }
+};
+
+export const exportUserData = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const data = {
+            user: {
+                name: user.name,
+                email: user.email,
+                profile: user.profile,
+                notificationPreferences: user.notificationPreferences,
+                createdAt: user.createdAt
+            },
+            exportedAt: new Date()
+        };
+        return res.status(200).json({ data, success: true });
+    } catch (error) {
+        return res.status(500).json({ message: error.message, success: false });
+    }
+};
