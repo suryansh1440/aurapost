@@ -1,16 +1,32 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation, useParams, useNavigate } from "react-router-dom";
 import { Icons } from "../../utils/dashboardData";
 import { useAuthStore } from "../../store/authStore";
 import { useWorkspaceStore } from "../../store/workspaceStore";
+import { useNotificationStore } from "../../store/notificationStore";
 
 const Sidebar = () => {
   const location = useLocation();
   const { wsId } = useParams();
-  const { workspaces } = useWorkspaceStore();
+  const { workspaces, fetchWorkspaceById } = useWorkspaceStore();
 
   const isWorkspaceContext = location.pathname.includes("/workspaces/") && wsId;
   const currentWs = isWorkspaceContext ? workspaces.find(w => w._id === wsId) : null;
+
+  // Fetch workspace data if we're in workspace context but store is empty (hard reload)
+  useEffect(() => {
+    if (isWorkspaceContext && wsId && !currentWs) {
+      fetchWorkspaceById(wsId);
+    }
+  }, [wsId, isWorkspaceContext]);
+
+  const { fetchNotifications, notifications, pendingInvites } = useNotificationStore();
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const unreadCount = notifications.filter(n => !n.isRead).length + pendingInvites.length;
 
   const isActive = (path, exact = true) => 
     exact ? location.pathname === path : location.pathname.startsWith(path);
@@ -33,17 +49,22 @@ const Sidebar = () => {
       </Link>
 
       <div className="sidebar-section" style={{ marginTop: "1rem" }}>
-        {isWorkspaceContext && currentWs ? (
+        {isWorkspaceContext ? (
           <>
             <div className="sidebar-section-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {currentWs.workspaceLogo ? (
+                {currentWs?.workspaceLogo ? (
                    <img src={currentWs.workspaceLogo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
-                ) : (
+                ) : currentWs?.emoji ? (
                    <span style={{ fontSize: '16px' }}>{currentWs.emoji}</span>
+                ) : (
+                   <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)' }} />
                 )}
               </div>
-              <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentWs.name}</span>
+              {currentWs
+                ? <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentWs.name}</span>
+                : <div style={{ height: '12px', width: '100px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+              }
             </div>
             
             <Link to="/dashboard/workspaces" className="nav-item">
@@ -84,6 +105,12 @@ const Sidebar = () => {
               </svg>
               <span>Post Queue</span>
             </Link>
+            <Link to={`/dashboard/workspaces/${wsId}/manage`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/manage`) ? 'active' : ''}`} style={{ marginTop: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "12px" }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={Icons.settings} />
+              </svg>
+              <span>Manage</span>
+            </Link>
           </>
         ) : (
           <>
@@ -112,6 +139,13 @@ const Sidebar = () => {
                 <path d={Icons.calendar} />
               </svg>
               <span>Scheduler</span>
+            </Link>
+            <Link to="/dashboard/notifications" className={`nav-item ${isActive('/dashboard/notifications') ? 'active' : ''}`}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d={Icons.bell} />
+              </svg>
+              <span>Notifications</span>
+              {unreadCount > 0 && <span className="nav-badge" style={{ background: '#ff7675', color: '#fff' }}>{unreadCount}</span>}
             </Link>
 
             <div className="sidebar-section-label" style={{ marginTop: "2rem" }}>Configuration</div>

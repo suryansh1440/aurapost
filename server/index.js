@@ -5,6 +5,8 @@ import cookieParser from 'cookie-parser'
 import { connectDB } from './config/db.js'
 import authRoute from "./routes/auth.route.js"
 import workspaceRoute from "./routes/workspace.route.js"
+import notificationRoute from "./routes/notification.route.js"
+import socialRoute from "./routes/social.route.js"
 
 dotenv.config()
 
@@ -24,6 +26,8 @@ app.use(cookieParser())
 // routes
 app.use("/api/auth", authRoute);
 app.use("/api/workspaces", workspaceRoute);
+app.use("/api/notifications", notificationRoute);
+app.use("/api/social", socialRoute);
 
 
 

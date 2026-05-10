@@ -12,34 +12,18 @@ const workspaceSchema = new mongoose.Schema(
         },
         members: [
             {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "User"
+                user: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "User"
+                },
+                role: {
+                    type: String,
+                    enum: ["ADMIN", "EDITOR", "VIEWER"],
+                    default: "VIEWER"
+                }
             }
         ],
-        facebookAccounts: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "FacebookAccount"
-            }
-        ],
-        instagramAccounts: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "InstagramAccount"
-            }
-        ],
-        twitterAccounts: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "TwitterAccount"
-            }
-        ],
-        tiktokAccounts: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "TiktokAccount"
-            }
-        ],
+
         status: {
             type: String,
             enum: ["ACTIVE", "INACTIVE"],
@@ -58,11 +42,11 @@ const workspaceSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "AccountIdentity"
         },
-        owner:{
+        owner: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
         },
-        workspaceLogo:{
+        workspaceLogo: {
             type: String,
             default: ""
         },

@@ -17,6 +17,7 @@ import DashboardScreen  from '../pages/dashboard/DashboardScreen'
 import WorkspacesScreen from '../pages/dashboard/WorkspacesScreen'
 import AnalyticsScreen  from '../pages/dashboard/AnalyticsScreen'
 import SchedulerScreen  from '../pages/dashboard/SchedulerScreen'
+import NotificationsScreen from '../pages/dashboard/NotificationsScreen'
 import SettingsScreen   from '../pages/dashboard/SettingsScreen'
 import ProfileSetting    from '../pages/dashboard/settings/ProfileSetting'
 import SecuritySetting   from '../pages/dashboard/settings/SecuritySetting'
@@ -29,6 +30,9 @@ import WsCreate         from '../pages/dashboard/workspace/WsCreate'
 import WsCharacters     from '../pages/dashboard/workspace/WsCharacters'
 import WsTrends         from '../pages/dashboard/workspace/WsTrends'
 import WsPosts          from '../pages/dashboard/workspace/WsPosts'
+import WsManage         from '../pages/dashboard/workspace/WsManage'
+import WsNotifications  from '../pages/dashboard/workspace/WsNotifications'
+import MetaCallback     from '../pages/dashboard/workspace/MetaCallback'
 
 const router = createBrowserRouter([
   {
@@ -55,6 +59,7 @@ const router = createBrowserRouter([
       {
         element: <ProtectedRoute />,
         children: [
+          { path: 'meta/callback', element: <MetaCallback /> },
           {
             path: 'dashboard',
             element: <DashboardLayout />,
@@ -63,6 +68,7 @@ const router = createBrowserRouter([
               { path: 'workspaces', element: <WorkspacesScreen /> },
               { path: 'analytics', element: <AnalyticsScreen /> },
               { path: 'scheduler', element: <SchedulerScreen /> },
+              { path: 'notifications', element: <NotificationsScreen /> },
               { 
                 path: 'settings', 
                 element: <SettingsScreen />,
@@ -81,6 +87,7 @@ const router = createBrowserRouter([
               { path: 'workspaces/:wsId/characters', element: <WsCharacters /> },
               { path: 'workspaces/:wsId/trends', element: <WsTrends /> },
               { path: 'workspaces/:wsId/posts', element: <WsPosts /> },
+              { path: 'workspaces/:wsId/manage', element: <WsManage /> },
             ],
           },
         ],

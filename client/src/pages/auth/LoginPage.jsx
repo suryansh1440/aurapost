@@ -119,7 +119,7 @@ const LoginPage = () => {
                 </motion.button>
 
                 <FacebookLogin
-                  appId={import.meta.env.VITE_FACEBOOK_APP_ID || "100000000000000"}
+                  appId={import.meta.env.VITE_FACEBOOK_APP_ID_MAIN_LOGIN || "100000000000000"}
                   scope="public_profile,email"
                   fields="name,email,picture"
                   onSuccess={(response) => responseFacebook(response)}

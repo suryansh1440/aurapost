@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import { toast } from "react-hot-toast"
 import apiClient from "../utils/axios";
+import { useWorkspaceStore } from "./workspaceStore";
+import { useNotificationStore } from "./notificationStore";
 
 export const useAuthStore = create((set, get) => ({
     user:null,
@@ -111,6 +113,8 @@ export const useAuthStore = create((set, get) => ({
         try {
             await apiClient.post("/auth/logout");
             set({user:null,isAuthenticated: false});
+            useWorkspaceStore.getState().clearWorkspaces();
+            useNotificationStore.getState().clearNotifications();
             toast.success("User logged out successfully")
             
         } catch (error) {

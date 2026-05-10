@@ -62,3 +62,6 @@ desktop.ini
 # Logs
 logs
 *.log
+todo
+scripts/
+test-*.js

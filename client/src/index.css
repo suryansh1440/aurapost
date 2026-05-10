@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 @import "tailwindcss";
 
 /* ── Brand Design Tokens ─────────────────────────────────────────── */
@@ -257,7 +258,6 @@ ul, ol { list-style: none; padding: 0; margin: 0; }
 }
 
 /* ── MODULAR DASHBOARD CSS ───────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
 .syne { font-family: 'Syne', sans-serif; }
 
@@ -445,3 +445,5 @@ ul, ol { list-style: none; padding: 0; margin: 0; }
 /* transitions */
 .fade-in { animation:fadeIn 0.3s ease forwards; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+
