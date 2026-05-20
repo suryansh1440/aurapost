@@ -7,6 +7,8 @@ import authRoute from "./routes/auth.route.js"
 import workspaceRoute from "./routes/workspace.route.js"
 import notificationRoute from "./routes/notification.route.js"
 import socialRoute from "./routes/social.route.js"
+import aiModelRoute from "./routes/aiModel.route.js"
+import outfitRoute from "./routes/outfit.route.js"
 
 dotenv.config()
 
@@ -28,6 +30,8 @@ app.use("/api/auth", authRoute);
 app.use("/api/workspaces", workspaceRoute);
 app.use("/api/notifications", notificationRoute);
 app.use("/api/social", socialRoute);
+app.use("/api/ai-models", aiModelRoute);
+app.use("/api/outfits", outfitRoute);
 
 
 

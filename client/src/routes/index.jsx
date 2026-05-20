@@ -27,7 +27,9 @@ import AccountSetting from '../pages/dashboard/settings/AccountSetting'
 // Workspace Specific Screens
 import WsDashboard      from '../pages/dashboard/workspace/WsDashboard'
 import WsCreate         from '../pages/dashboard/workspace/WsCreate'
-import WsCharacters     from '../pages/dashboard/workspace/WsCharacters'
+import WsAiModels     from '../pages/dashboard/workspace/WsAiModels'
+import WsAiModelGenerate from '../pages/dashboard/workspace/WsAiModelGenerate'
+import WsAiModelDetail from '../pages/dashboard/workspace/WsAiModelDetail'
 import WsTrends         from '../pages/dashboard/workspace/WsTrends'
 import WsPosts          from '../pages/dashboard/workspace/WsPosts'
 import WsManage         from '../pages/dashboard/workspace/WsManage'
@@ -84,7 +86,9 @@ const router = createBrowserRouter([
               },
               { path: 'workspaces/:wsId', element: <WsDashboard /> },
               { path: 'workspaces/:wsId/create', element: <WsCreate /> },
-              { path: 'workspaces/:wsId/characters', element: <WsCharacters /> },
+              { path: 'workspaces/:wsId/ai-models', element: <WsAiModels /> },
+              { path: 'workspaces/:wsId/ai-models/generate', element: <WsAiModelGenerate /> },
+              { path: 'workspaces/:wsId/ai-models/:modelId', element: <WsAiModelDetail /> },
               { path: 'workspaces/:wsId/trends', element: <WsTrends /> },
               { path: 'workspaces/:wsId/posts', element: <WsPosts /> },
               { path: 'workspaces/:wsId/manage', element: <WsManage /> },

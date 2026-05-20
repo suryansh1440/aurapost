@@ -5,155 +5,171 @@ import { useAuthStore } from "../../store/authStore";
 import { useWorkspaceStore } from "../../store/workspaceStore";
 import { useNotificationStore } from "../../store/notificationStore";
 
-const Sidebar = () => {
+const Sidebar = ({ isCollapsed, toggleCollapse }) => {
   const location = useLocation();
   const { wsId } = useParams();
   const { workspaces, fetchWorkspaceById } = useWorkspaceStore();
-
-  const isWorkspaceContext = location.pathname.includes("/workspaces/") && wsId;
-  const currentWs = isWorkspaceContext ? workspaces.find(w => w._id === wsId) : null;
+  const { fetchNotifications, notifications, pendingInvites } = useNotificationStore();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
 
   // Fetch workspace data if we're in workspace context but store is empty (hard reload)
   useEffect(() => {
-    if (isWorkspaceContext && wsId && !currentWs) {
+    if (wsId && !workspaces.find(w => w._id === wsId)) {
       fetchWorkspaceById(wsId);
     }
-  }, [wsId, isWorkspaceContext]);
-
-  const { fetchNotifications, notifications, pendingInvites } = useNotificationStore();
+  }, [wsId, fetchWorkspaceById]);
 
   useEffect(() => {
     fetchNotifications();
-  }, []);
+  }, [fetchNotifications]);
 
+  const isWorkspaceContext = location.pathname.includes("/workspaces/") && wsId;
+  const currentWs = isWorkspaceContext ? workspaces.find(w => w._id === wsId) : null;
   const unreadCount = notifications.filter(n => !n.isRead).length + pendingInvites.length;
 
   const isActive = (path, exact = true) => 
     exact ? location.pathname === path : location.pathname.startsWith(path);
   
-  const { logout } = useAuthStore();
-  const navigate = useNavigate();
-
   const handleLogout = async () => {
     await logout();
     navigate('/login');
   };
-
   return (
     <div className="sidebar">
+      <button className="sidebar-toggle" onClick={toggleCollapse}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+      </button>
+
       <Link to="/" className="sidebar-logo" style={{ textDecoration: 'none' }}>
         <div className="sidebar-logo-mark" style={{ background: 'none' }}>
           <img src="/logos/logo_aurapost.png" alt="AuraPost" style={{ width: '58px', height: '58px', objectFit: 'contain' }} />
         </div>
-        <div className="sidebar-logo-text" style={{ fontSize: '18px' }}>AuraPost</div>
+        {!isCollapsed && <div className="sidebar-logo-text" style={{ fontSize: '18px' }}>AuraPost</div>}
       </Link>
 
       <div className="sidebar-section" style={{ marginTop: "1rem" }}>
         {isWorkspaceContext ? (
           <>
-            <div className="sidebar-section-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {currentWs?.workspaceLogo ? (
-                   <img src={currentWs.workspaceLogo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
-                ) : currentWs?.emoji ? (
-                   <span style={{ fontSize: '16px' }}>{currentWs.emoji}</span>
-                ) : (
-                   <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)' }} />
-                )}
+            {!isCollapsed && (
+              <div className="sidebar-section-label" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ width: '20px', height: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {currentWs?.workspaceLogo ? (
+                    <img src={currentWs.workspaceLogo} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '4px' }} />
+                  ) : currentWs?.emoji ? (
+                    <span style={{ fontSize: '16px' }}>{currentWs.emoji}</span>
+                  ) : (
+                    <div style={{ width: '16px', height: '16px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)' }} />
+                  )}
+                </div>
+                {currentWs
+                  ? <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentWs.name}</span>
+                  : <div style={{ height: '12px', width: '100px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                }
               </div>
-              {currentWs
-                ? <span style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentWs.name}</span>
-                : <div style={{ height: '12px', width: '100px', borderRadius: '4px', background: 'rgba(255,255,255,0.08)', animation: 'pulse 1.5s ease-in-out infinite' }} />
-              }
-            </div>
+            )}
             
             <Link to="/dashboard/workspaces" className="nav-item">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
               </svg>
-              <span>Back to Workspaces</span>
+              {!isCollapsed && <span>Back to Workspaces</span>}
             </Link>
 
             <Link to={`/dashboard/workspaces/${wsId}`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}`) ? 'active' : ''}`} style={{ marginTop: "10px" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.home} />
               </svg>
-              <span>Workspace Home</span>
+              {!isCollapsed && <span>Workspace Home</span>}
             </Link>
             <Link to={`/dashboard/workspaces/${wsId}/create`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/create`) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.plus} />
               </svg>
-              <span>Create Content</span>
+              {!isCollapsed && <span>Create Content</span>}
             </Link>
-            <Link to={`/dashboard/workspaces/${wsId}/characters`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/characters`) ? 'active' : ''}`}>
+            <Link to={`/dashboard/workspaces/${wsId}/ai-models`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/ai-models`) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.users} />
               </svg>
-              <span>AI Characters</span>
+              {!isCollapsed && <span>AI Models</span>}
             </Link>
             <Link to={`/dashboard/workspaces/${wsId}/trends`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/trends`) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.trending} />
               </svg>
-              <span>Trending Ideas</span>
-              <span className="nav-badge">New</span>
+              {!isCollapsed && (
+                <>
+                  <span>Trending Ideas</span>
+                  <span className="nav-badge">New</span>
+                </>
+              )}
             </Link>
             <Link to={`/dashboard/workspaces/${wsId}/posts`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/posts`) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.layers} />
               </svg>
-              <span>Post Queue</span>
+              {!isCollapsed && <span>Post Queue</span>}
             </Link>
             <Link to={`/dashboard/workspaces/${wsId}/manage`} className={`nav-item ${isActive(`/dashboard/workspaces/${wsId}/manage`) ? 'active' : ''}`} style={{ marginTop: "8px", borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: "12px" }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.settings} />
               </svg>
-              <span>Manage</span>
+              {!isCollapsed && <span>Manage</span>}
             </Link>
           </>
         ) : (
           <>
-            <div className="sidebar-section-label">Main</div>
+            {!isCollapsed && <div className="sidebar-section-label">Main</div>}
             <Link to="/dashboard" className={`nav-item ${isActive('/dashboard') ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.home} />
               </svg>
-              <span>Overview</span>
+              {!isCollapsed && <span>Overview</span>}
             </Link>
             <Link to="/dashboard/workspaces" className={`nav-item ${isActive('/dashboard/workspaces') ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.workspace} />
               </svg>
-              <span>Workspaces</span>
-              {workspaces.length > 0 && <span className="nav-badge">{workspaces.length}</span>}
+              {!isCollapsed && (
+                <>
+                  <span>Workspaces</span>
+                  {workspaces.length > 0 && <span className="nav-badge">{workspaces.length}</span>}
+                </>
+              )}
             </Link>
             <Link to="/dashboard/analytics" className={`nav-item ${isActive('/dashboard/analytics') ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.chart} />
               </svg>
-              <span>Analytics</span>
+              {!isCollapsed && <span>Analytics</span>}
             </Link>
             <Link to="/dashboard/scheduler" className={`nav-item ${isActive('/dashboard/scheduler') ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.calendar} />
               </svg>
-              <span>Scheduler</span>
+              {!isCollapsed && <span>Scheduler</span>}
             </Link>
             <Link to="/dashboard/notifications" className={`nav-item ${isActive('/dashboard/notifications') ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.bell} />
               </svg>
-              <span>Notifications</span>
-              {unreadCount > 0 && <span className="nav-badge" style={{ background: '#ff7675', color: '#fff' }}>{unreadCount}</span>}
+              {!isCollapsed && (
+                <>
+                  <span>Notifications</span>
+                  {unreadCount > 0 && <span className="nav-badge" style={{ background: '#ff7675', color: '#fff' }}>{unreadCount}</span>}
+                </>
+              )}
             </Link>
 
-            <div className="sidebar-section-label" style={{ marginTop: "2rem" }}>Configuration</div>
+            {!isCollapsed && <div className="sidebar-section-label" style={{ marginTop: "2rem" }}>Configuration</div>}
             <Link to="/dashboard/settings" className={`nav-item ${isActive('/dashboard/settings', false) ? 'active' : ''}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d={Icons.settings} />
               </svg>
-              <span>Settings</span>
+              {!isCollapsed && <span>Settings</span>}
             </Link>
           </>
         )}
@@ -168,9 +184,11 @@ const Sidebar = () => {
               <line x1="21" y1="12" x2="9" y2="12"></line>
             </svg>
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "13px", fontWeight: 600, color: "#ff7675" }}>Logout</div>
-          </div>
+          {!isCollapsed && (
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "#ff7675" }}>Logout</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

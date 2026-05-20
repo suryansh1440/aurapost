@@ -114,12 +114,36 @@ const WorkspacesScreen = () => {
                 <div className="ws-meta">{ws.description}</div>
                 <div className="ws-stats">
                   <div className="ws-stat">Posts<strong>{ws.postCount || 0}</strong></div>
-                  <div className="ws-stat">Accounts<strong>{(ws.facebookAccounts?.length || 0) + (ws.instagramAccounts?.length || 0)}</strong></div>
+                  <div className="ws-stat">Accounts<strong>{ws.integrationCount || 0}</strong></div>
                   <div className="ws-stat">
-                    Status
-                    <strong style={{ color: ws.status === 'ACTIVE' ? '#39FF14' : '#ff7675' }}>
-                      {ws.status === 'ACTIVE' ? 'Active' : 'Action Req'}
-                    </strong>
+                    Platforms
+                    <div style={{ display: 'flex', gap: '4px', marginTop: '2px' }}>
+                      {ws.connectedPlatforms?.length > 0 ? (
+                        ws.connectedPlatforms.map(p => (
+                          <div key={p} style={{ 
+                            width: '16px', 
+                            height: '16px', 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            background: p === 'FACEBOOK' ? 'rgba(24, 119, 242, 0.15)' : p === 'INSTAGRAM' ? 'rgba(225, 48, 108, 0.15)' : 'rgba(255,255,255,0.1)', 
+                            color: p === 'FACEBOOK' ? '#1877F2' : p === 'INSTAGRAM' ? '#E1306C' : '#fff',
+                            borderRadius: '4px', 
+                            padding: '2px' 
+                          }}>
+                             {p === 'FACEBOOK' ? (
+                               <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3l-.5 3h-2.5v6.8c4.56-.93 8-4.96 8-9.8z"/></svg>
+                             ) : p === 'INSTAGRAM' ? (
+                               <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zM12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 2c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm4.5-1c-.28 0-.5.22-.5.5s.22.5.5.5.5-.22.5-.5-.22-.5-.5-.5z"/></svg>
+                             ) : (
+                               <span style={{ fontSize: '8px' }}>{p[0]}</span>
+                             )}
+                          </div>
+                        ))
+                      ) : (
+                        <span style={{ fontSize: '10px', color: '#4a4870' }}>None</span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

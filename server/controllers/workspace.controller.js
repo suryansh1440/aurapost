@@ -57,17 +57,61 @@ export const getWorkspaces = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
-        const query = { 
-            $or: [{ owner: req.user._id }, { "members.user": req.user._id }], 
-            isDeleted: false 
-        };
+        const userId = req.user._id;
+
+        // Use aggregation to fetch workspaces and count their integrations
+        const workspaces = await Workplace.aggregate([
+            {
+                $match: {
+                    $or: [{ owner: userId }, { "members.user": userId }],
+                    isDeleted: false
+                }
+            },
+            { $sort: { createdAt: -1 } },
+            { $skip: skip },
+            { $limit: limit },
+            {
+                $lookup: {
+                    from: "integrations", // name of the collection in MongoDB
+                    localField: "_id",
+                    foreignField: "workspaceId",
+                    as: "integrations"
+                }
+            },
+            {
+                $addFields: {
+                    integrationCount: { $size: "$integrations" },
+                    connectedPlatforms: {
+                        $reduce: {
+                            input: "$integrations",
+                            initialValue: [],
+                            in: {
+                                $setUnion: [
+                                    "$$value",
+                                    {
+                                        $concatArrays: [
+                                            { $cond: [{ $gt: ["$$this.facebookPageId", null] }, ["FACEBOOK"], []] },
+                                            { $cond: [{ $gt: ["$$this.instagramBusinessId", null] }, ["INSTAGRAM"], []] }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                $project: {
+                    integrations: 0 // Remove the full integration objects to keep response small
+                }
+            }
+        ]);
+
+        const totalWorkspaces = await Workplace.countDocuments({
+            $or: [{ owner: userId }, { "members.user": userId }],
+            isDeleted: false
+        });
         
-        const workspaces = await Workplace.find(query)
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(limit);
-            
-        const totalWorkspaces = await Workplace.countDocuments(query);
         const totalPages = Math.ceil(totalWorkspaces / limit);
 
         res.status(200).json({ 
@@ -86,10 +130,10 @@ export const getWorkspaces = async (req, res) => {
 // @access  Private
 export const getWorkspaceById = async (req, res) => {
     try {
-        const workspace = await Workplace.findOne({ 
-            _id: req.params.id, 
-            $or: [{ owner: req.user._id }, { "members.user": req.user._id }], 
-            isDeleted: false 
+        const workspace = await Workplace.findOne({
+            _id: req.params.id,
+            $or: [{ owner: req.user._id }, { "members.user": req.user._id }],
+            isDeleted: false
         }).populate("members.user", "name email profile.avatar").populate("owner", "name email profile.avatar");
 
         if (!workspace) {

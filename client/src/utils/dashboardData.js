@@ -20,6 +20,7 @@ export const Icons = {
   upload: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 M17 8l-5-5-5 5 M12 3v12",
   layers: "M12 2L2 7l10 5 10-5-10-5z M2 17l10 5 10-5 M2 12l10 5 10-5",
   clock: "M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10z M12 6v6l4 2",
+  trash: "M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2 M10 11v6 M14 11v6",
 };
 
 export const workspaces = [
@@ -32,7 +33,7 @@ export const recentActivity = [
   { color: "#6c5ce7", text: "Reel posted successfully on @fashionista.ai", time: "2 min ago" },
   { color: "#00d4aa", text: "AI script generated for 'Summer trends 2025'", time: "18 min ago" },
   { color: "#ffd32a", text: "Video generation completed — fal.ai", time: "45 min ago" },
-  { color: "#a29bfe", text: "New character 'Sophia' created in Tech Startup", time: "1 hr ago" },
+  { color: "#a29bfe", text: "New model 'Sophia' created in Tech Startup", time: "1 hr ago" },
   { color: "#ff7675", text: "Post scheduled for tomorrow 9:00 AM", time: "2 hr ago" },
   { color: "#6c5ce7", text: "Instagram token refreshed for @techlaunch.io", time: "5 hr ago" },
 ];
@@ -45,12 +46,12 @@ export const postQueue = [
   { emoji: "🔥", caption: "The viral video formula that got us 2M views", time: "Wed 10:00 AM", account: "@techlaunch.io", status: "failed" },
 ];
 
-export const characters = [
-  { name: "Sophia", type: "Lifestyle Creator", emoji: "👩‍🦰", color: "rgba(244,167,185,0.15)", tags: ["casual", "energetic", "millennial"] },
-  { name: "Marcus", type: "Tech Influencer", emoji: "👨‍💻", color: "rgba(116,185,255,0.15)", tags: ["professional", "informative"] },
-  { name: "Zara", type: "Fashion Host", emoji: "💃", color: "rgba(162,155,254,0.15)", tags: ["trendy", "bold", "Gen-Z"] },
-  { name: "Alex", type: "Fitness Coach", emoji: "💪", color: "rgba(85,239,196,0.15)", tags: ["motivational", "athletic"] },
-  { name: "Luna", type: "Food Critic", emoji: "👩‍🍳", color: "rgba(255,211,42,0.15)", tags: ["witty", "detailed", "fun"] },
+export const aiModels = [
+  { name: "Sophia", type: "Lifestyle Creator", emoji: "👩‍🦰", color: "rgba(244,167,185,0.15)", tags: [] },
+  { name: "Marcus", type: "Tech Influencer", emoji: "👨‍💻", color: "rgba(116,185,255,0.15)", tags: [] },
+  { name: "Zara", type: "Fashion Host", emoji: "💃", color: "rgba(162,155,254,0.15)", tags: [] },
+  { name: "Alex", type: "Fitness Coach", emoji: "💪", color: "rgba(85,239,196,0.15)", tags: [] },
+  { name: "Luna", type: "Food Critic", emoji: "👩‍🍳", color: "rgba(255,211,42,0.15)", tags: [] },
 ];
 
 export const trendingTopics = [
